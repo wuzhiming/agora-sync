@@ -1,0 +1,23 @@
+{
+  "version": "1.0.0",
+  "lesson": {
+    "2ef9b57f-d2fe-4780-815d-a8d0e5007ac6": {
+      "id": "2ef9b57f-d2fe-4780-815d-a8d0e5007ac6",
+      "name": "新建课程",
+      "nodeType": "eduLesson",
+      "folder": "cec8322a-2902-40a3-92d1-96d6bc3308ec",
+      "parentId": "e6a163c5-769a-403f-858a-91d64ca9abea",
+      "asset": "",
+      "lastModified": 1629124197000
+    },
+    "2c746532-0210-4d20-abef-e26c9619f277": {
+      "id": "2c746532-0210-4d20-abef-e26c9619f277",
+      "name": "agora",
+      "nodeType": "eduLesson",
+      "folder": "b8646b74-ba8f-461d-88ff-87ca1c02140c",
+      "parentId": "0a09972d-8605-4540-9909-713756adc4a2",
+      "asset": "",
+      "lastModified": 1629124218000
+    }
+  }
+}

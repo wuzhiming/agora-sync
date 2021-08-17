@@ -1,0 +1,8 @@
+{
+  "design-resolution-width": 1920,
+  "design-resolution-height": 1080,
+  "migrate-history": [
+    "cloud-function"
+  ],
+  "start-scene": "1e89f206-c04f-424d-8003-83232fdcc061"
+}

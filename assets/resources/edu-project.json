@@ -1,0 +1,29 @@
+{
+  "version": "2.0.0",
+  "entry": [
+    "e6a163c5-769a-403f-858a-91d64ca9abea",
+    "0a09972d-8605-4540-9909-713756adc4a2"
+  ],
+  "directory": {
+    "e6a163c5-769a-403f-858a-91d64ca9abea": {
+      "id": "e6a163c5-769a-403f-858a-91d64ca9abea",
+      "name": "Knox",
+      "children": [],
+      "lessons": [
+        "2ef9b57f-d2fe-4780-815d-a8d0e5007ac6"
+      ],
+      "nodeType": "eduDirectory",
+      "parentId": null
+    },
+    "0a09972d-8605-4540-9909-713756adc4a2": {
+      "id": "0a09972d-8605-4540-9909-713756adc4a2",
+      "name": "啾啾啾",
+      "children": [],
+      "lessons": [
+        "2c746532-0210-4d20-abef-e26c9619f277"
+      ],
+      "nodeType": "eduDirectory",
+      "parentId": null
+    }
+  }
+}
