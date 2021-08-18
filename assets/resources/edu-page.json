@@ -7,6 +7,12 @@
                 "id": "c45057d4-cab1-48bf-8e05-d3f51a0b80e1",
                 "name": "新建页面",
                 "asset": "31726319-35fc-4afc-a068-da6299ece1b1",
+                "next": "af1f32a4-bcf1-46a5-bab9-3d1a4f93dc47"
+            },
+            {
+                "id": "af1f32a4-bcf1-46a5-bab9-3d1a4f93dc47",
+                "name": "新建页面 1",
+                "asset": "7517bda3-947e-47b7-a47d-2d8c87126e0f",
                 "next": ""
             }
         ]
