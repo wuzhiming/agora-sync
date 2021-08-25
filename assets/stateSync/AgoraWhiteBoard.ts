@@ -40,6 +40,9 @@ export enum AgoraEvents {
 }
 
 class AgoraWhiteBoard extends cc.EventTarget implements IStateSync {
+    _pageLoaded = false;
+    _pageInit = false;
+
     constructor() {
         super();
         this.registerEvent();
@@ -69,15 +72,24 @@ class AgoraWhiteBoard extends cc.EventTarget implements IStateSync {
         this.postMessage(IframeEvents.SetPage, page);
     }
 
+    setAttributes(obj: any) {
+        this.postMessage(IframeEvents.SetAttributes, obj);
+    }
+
+    getAttribute() {
+        this.postMessage(IframeEvents.GetAttributes);
+    }
+
+    setCurPage(page) {
+        this.setAttributes({curPage: page});
+    }
+
     postMessage(name: string, obj?: any): void {
+        console.log('post message', name, obj);
         parent.postMessage({
             kind: name,
             payload: obj
         }, "*");
-    }
-
-    syncState(data: any): void {
-        this.postMessage(IframeEvents.SetAttributes, data);
     }
 
     private registerEvent() {
@@ -90,16 +102,34 @@ class AgoraWhiteBoard extends cc.EventTarget implements IStateSync {
     }
 
     onPageChanged(info) {
+        if (!this._pageLoaded) {
+            this._pageLoaded = true;
+            return;
+        }
         let [cur, total] = GameConfig.getPagePositionInfo(info.page.id);
+        this.setCurPage(info.page.id);
         this.pageTo(cur);
     }
 
     onInit() {
-        let pageInfo = GameConfig.getBeginPage();
-        let [cur, total] = GameConfig.getPagePositionInfo(pageInfo.id);
-        this.setTotalPages(total);
+        this.getAttribute();
+
         this.on(StateSyncEvent.PageChange, this.handlePageChanged, this);
-        this.init();
+    }
+
+    private _initPage(info) {
+        if (this._pageInit) return;
+        this._pageInit = true;
+        //todo:拿到当前的页数，然后看看本地是不是当前页，不是就切过去
+        let pageId = info.curPage
+        if (!pageId) {
+            let pageInfo = GameConfig.getBeginPage();
+            pageId = pageInfo.id;
+            this.setCurPage(pageId);
+        }
+        let [cur, total] = GameConfig.getPagePositionInfo(pageId);
+        this.setTotalPages(total);
+        eduGame.goPageByID(pageId);
     }
 
     handlePageChanged(info) {
@@ -113,7 +143,7 @@ class AgoraWhiteBoard extends cc.EventTarget implements IStateSync {
     }
 
     private onMessage(event) {
-        console.log('receive event ', event);
+        console.log('receive event ', event.data);
         let data = event.data;
         let payload = data.payload;
         switch (data.kind) {
@@ -129,11 +159,15 @@ class AgoraWhiteBoard extends cc.EventTarget implements IStateSync {
                 console.log('onMessage AttributesUpdate', payload);
                 this.emit(StateSyncEvent.StateUpdate, payload);
                 break;
+            case IframeEvents.GetAttributes:
+                this._initPage(payload);
+                break;
             default:
                 break;
         }
     }
 }
+
 
 export let agoraWhiteBoard = new AgoraWhiteBoard();
 

@@ -9,7 +9,7 @@ const {ccclass, property} = cc._decorator;
 import EduElementAbstract from 'EduElementAbstract';
 import {eduStateSync, IStateSyncComp} from './EduStateSync';
 
-@ccclass('StateSyncComp')
+@ccclass()
 export default class StateSyncComp extends EduElementAbstract implements IStateSyncComp {
     syncData: any = {};
 
@@ -18,14 +18,20 @@ export default class StateSyncComp extends EduElementAbstract implements IStateS
     }
 
     onLoad() {
-        eduStateSync.registerStateSyncData(this);
+        eduStateSync.on(`data-update-${this.id}`, this.onDataUpdate, this);
     }
 
     onDestroy() {
-        eduStateSync.unRegisterStateSyncData(this);
+        console.log('destroy item', this.id);
+        eduStateSync.off(`data-update-${this.id}`, this.onDataUpdate, this);
     }
 
-    async onDataUpdate(data) {
+    onDataUpdate(data) {
+        if (!data) return;
         this.syncData = data;
+    }
+
+    dataSync() {
+        eduStateSync.syncChanges(this);
     }
 }

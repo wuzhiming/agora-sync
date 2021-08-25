@@ -216,7 +216,7 @@
       "__id__": 1
     },
     "asset": {
-      "__uuid__": "28599ca7-d28e-420c-8eaf-98787e6943cd"
+      "__uuid__": "1f05f947-3355-4d39-a001-bad625c2bca4"
     },
     "fileId": "88CX3vBG9LzpOsYJxh/Rwk",
     "sync": false
@@ -8752,7 +8752,7 @@
     "asset": {
       "__uuid__": "16dca7e0-c646-482c-9501-afd9b46437ee"
     },
-    "fileId": "94Bpf5m7NPN7qrJ+iaYRPb",
+    "fileId": "f7Gip141FFB7sbBkvGUyqA",
     "sync": false
   },
   {
@@ -8793,7 +8793,7 @@
       "__id__": 1
     },
     "_enabled": true,
-    "id": "31721ea2-5cb9-5135-cde0-0d4028072372",
+    "id": "ce39e11a-61d6-a196-fd12-a6a59786de16",
     "type": "page",
     "bgSprite": {
       "__id__": 3
@@ -8825,7 +8825,7 @@
       "__id__": 1
     },
     "asset": {
-      "__uuid__": "28599ca7-d28e-420c-8eaf-98787e6943cd"
+      "__uuid__": "1f05f947-3355-4d39-a001-bad625c2bca4"
     },
     "fileId": "",
     "sync": false

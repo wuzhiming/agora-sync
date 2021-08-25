@@ -1,7 +1,7 @@
 export interface IStateSync {
     init(): void;
 
-    syncState(data: any): void;
+    setAttributes(data: any): void;
 
     nextPage(): void;
 

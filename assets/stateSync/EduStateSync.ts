@@ -2,17 +2,15 @@ import {IStateSync, StateSyncEvent} from "./IStateSync";
 import {agoraWhiteBoard} from './AgoraWhiteBoard';
 import EduElementAbstract from 'EduElementAbstract';
 
-export interface IStateEvent {
-    key: string;
-    callback: Function,
-}
-
+/**
+ * 状态同步组件需要接入的接口
+ */
 export interface IStateSyncComp {
     syncData: any;
 
     getId(): string;
 
-    onDataUpdate(data): Promise<void>;
+    onDataUpdate(data);
 }
 
 class EduStateSync extends cc.EventTarget {
@@ -40,25 +38,44 @@ class EduStateSync extends cc.EventTarget {
 
     onStateUpdate(data) {
         console.log('----onStateUpdate', data);
-        //todo:下发到数据有更新的组件
+
+        //todo:需要做个diff，这样才能准确知道哪个有改动AttributesUpdate
+        if (!data.ice) return;
+        let iceData = data.ice;
+        let compId = data.ice.changeId;
+        this.syncList = iceData.data;
+        if (this.syncList[iceData.changeId]) {
+            this.emit(`data-update-${compId}`,this.syncList[compId]);
+        }
     }
 
     /**
      * 把当前的数据同步到服务端
      */
-    async syncChanges(comp: IStateSyncComp) {
+    syncChanges(comp: IStateSyncComp) {
         //todo:提交数据更新
-    }
-
-    registerStateSyncData(comp: IStateSyncComp) {
-        if (!this.syncList[comp.getId()]) {
-            this.syncList[comp.getId()] = [];
+        let compId = comp.getId();
+        if (!compId) {
+            return console.warn('component id not found!');
         }
-        this.syncList[comp.getId()].push(comp);
+        if (!comp.syncData) {
+            return console.warn('syncData not found');
+        }
+        this.syncList[compId] = comp.syncData;
+
+        this.commitDataUpdate(compId);
     }
 
-    unRegisterStateSyncData(comp: IStateSyncComp) {
-        delete this.syncList[comp.getId()];
+    commitDataUpdate(compId: string) {
+        let commitData = {
+            changeId: compId,
+            data: this.syncList,
+        };
+        const uploadData = {
+            ice:commitData,
+        }
+
+        this.syncInstance.setAttributes(uploadData);
     }
 }
 
