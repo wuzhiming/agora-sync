@@ -19,11 +19,13 @@ export default class StateSyncComp extends EduElementAbstract implements IStateS
 
     onLoad() {
         eduStateSync.on(`data-update-${this.id}`, this.onDataUpdate, this);
+        eduStateSync.getAttributes(this.id);
     }
 
     onDestroy() {
         console.log('destroy item', this.id);
         eduStateSync.off(`data-update-${this.id}`, this.onDataUpdate, this);
+        eduStateSync.removeData(this.id);
     }
 
     onDataUpdate(data) {

@@ -44,6 +44,10 @@ class EduStateSync extends cc.EventTarget {
         });
     }
 
+    getAttributes(compId) {
+        this.onStateUpdate(compId);
+    }
+
     /**
      * 把当前的数据同步到服务端
      */
@@ -65,7 +69,14 @@ class EduStateSync extends cc.EventTarget {
         //发送组件更新状态消息
         this.syncInstance.compStateUpdate(compId);
 
+        //本地的，自己去获取下更新
         this.onStateUpdate(compId);
+    }
+
+    async removeData(compId) {
+        let data = {};
+        data[compId] = undefined;
+        await this.syncInstance.setAttributes(data);
     }
 
 }
