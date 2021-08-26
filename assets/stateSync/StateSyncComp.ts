@@ -31,7 +31,7 @@ export default class StateSyncComp extends EduElementAbstract implements IStateS
         this.syncData = data;
     }
 
-    dataSync() {
-        eduStateSync.syncChanges(this);
+    async dataSync() {
+        await eduStateSync.syncChanges(this);
     }
 }

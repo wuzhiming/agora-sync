@@ -1,19 +1,33 @@
 export interface IStateSync {
-    init(): void;
+    init();
 
-    setAttributes(data: any): void;
+    setAttributes(data: any);
 
-    nextPage(): void;
+    nextPage();
 
-    prevPage(): void;
+    prevPage();
 
-    pageTo(page: number): void;
+    pageTo(page: number);
 
-    setTotalPages(page: number): void;
+    setTotalPages(page: number);
+
+    compStateUpdate(compId);
+
+    getAttributes();
+
+    setAttributes(attr: any);
 
     on(...args);
+    once(...args);
+    off(...args);
 }
+
 export enum StateSyncEvent {
-    PageChange ,
-    StateUpdate
+    PageChange = 'PageChange',
+    StateUpdate = 'StateUpdate',
+    //组件状态更新事件
+    CompStateUpdate = 'CompStateUpdate',
+    //获取状态
+    GetAttributes = 'GetAttributes',
+    AttributesUpdate = 'AttributesUpdate',
 }

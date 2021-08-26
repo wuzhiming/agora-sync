@@ -33,26 +33,21 @@ class EduStateSync extends cc.EventTarget {
     }
 
     private _initEvent() {
-        this.syncInstance.on(StateSyncEvent.StateUpdate, this.onStateUpdate, this);
+        this.syncInstance.on(StateSyncEvent.CompStateUpdate, this.onStateUpdate, this);
     }
 
-    onStateUpdate(data) {
-        console.log('----onStateUpdate', data);
-
-        //todo:需要做个diff，这样才能准确知道哪个有改动AttributesUpdate
-        if (!data.ice) return;
-        let iceData = data.ice;
-        let compId = data.ice.changeId;
-        this.syncList = iceData.data;
-        if (this.syncList[iceData.changeId]) {
-            this.emit(`data-update-${compId}`,this.syncList[compId]);
-        }
+    onStateUpdate(compId) {
+        this.syncInstance.getAttributes().then(data => {
+            if (data.hasOwnProperty(compId)) {
+                this.emit(`data-update-${compId}`, data[compId]);
+            }
+        });
     }
 
     /**
      * 把当前的数据同步到服务端
      */
-    syncChanges(comp: IStateSyncComp) {
+    async syncChanges(comp: IStateSyncComp) {
         //todo:提交数据更新
         let compId = comp.getId();
         if (!compId) {
@@ -63,20 +58,16 @@ class EduStateSync extends cc.EventTarget {
         }
         this.syncList[compId] = comp.syncData;
 
-        this.commitDataUpdate(compId);
+        let data = {};
+        data[compId] = comp.syncData;
+        //更新组件状态数据
+        await this.syncInstance.setAttributes(data);
+        //发送组件更新状态消息
+        this.syncInstance.compStateUpdate(compId);
+
+        this.onStateUpdate(compId);
     }
 
-    commitDataUpdate(compId: string) {
-        let commitData = {
-            changeId: compId,
-            data: this.syncList,
-        };
-        const uploadData = {
-            ice:commitData,
-        }
-
-        this.syncInstance.setAttributes(uploadData);
-    }
 }
 
 export let eduStateSync = new EduStateSync();

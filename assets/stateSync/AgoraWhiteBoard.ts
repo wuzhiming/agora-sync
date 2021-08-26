@@ -41,7 +41,6 @@ export enum AgoraEvents {
 
 class AgoraWhiteBoard extends cc.EventTarget implements IStateSync {
     _pageLoaded = false;
-    _pageInit = false;
 
     constructor() {
         super();
@@ -72,12 +71,29 @@ class AgoraWhiteBoard extends cc.EventTarget implements IStateSync {
         this.postMessage(IframeEvents.SetPage, page);
     }
 
-    setAttributes(obj: any) {
-        this.postMessage(IframeEvents.SetAttributes, obj);
+    async setAttributes(obj: any) {
+        return new Promise((resolve, reject) => {
+            this.once(StateSyncEvent.AttributesUpdate, (data) => {
+                resolve(data);
+            });
+            this.postMessage(IframeEvents.SetAttributes, obj);
+        });
     }
 
-    getAttribute() {
-        this.postMessage(IframeEvents.GetAttributes);
+    async getAttributes() {
+        return new Promise((resolve, reject) => {
+            this.once(StateSyncEvent.GetAttributes, (data) => {
+                resolve(data);
+            })
+            this.postMessage(IframeEvents.GetAttributes);
+        });
+    }
+
+    compStateUpdate(compId: string) {
+        this.postMessage(IframeEvents.DispatchMagixEvent, {
+            event: StateSyncEvent.CompStateUpdate,
+            payload: compId,
+        });
     }
 
     setCurPage(page) {
@@ -95,10 +111,14 @@ class AgoraWhiteBoard extends cc.EventTarget implements IStateSync {
     private registerEvent() {
         //监听iframe过来的事件
         window.addEventListener("message", this.onMessage.bind(this));
+        //注册 自定义 事件 ，组件状态更新
+        this.postMessage(IframeEvents.RegisterMagixEvent, StateSyncEvent.CompStateUpdate);
         //监听 eduGame 初始化事件
         eduGame.addEventListener(eduGame.Event.OnInitialize, this.onInit.bind(this));
         //监听 eduGame 的页面切换事件
         eduGame.addEventListener(eduGame.Event.OnPageSwitch, this.onPageChanged.bind(this));
+
+        this.once(StateSyncEvent.GetAttributes, this._initPage, this);
     }
 
     onPageChanged(info) {
@@ -112,15 +132,12 @@ class AgoraWhiteBoard extends cc.EventTarget implements IStateSync {
     }
 
     onInit() {
-        this.getAttribute();
+        this.getAttributes();
 
         this.on(StateSyncEvent.PageChange, this.handlePageChanged, this);
     }
 
     private _initPage(info) {
-        if (this._pageInit) return;
-        this._pageInit = true;
-        //todo:拿到当前的页数，然后看看本地是不是当前页，不是就切过去
         let pageId = info.curPage
         if (!pageId) {
             let pageInfo = GameConfig.getBeginPage();
@@ -156,11 +173,15 @@ class AgoraWhiteBoard extends cc.EventTarget implements IStateSync {
                 }
                 break;
             case IframeEvents.AttributesUpdate:
-                console.log('onMessage AttributesUpdate', payload);
-                this.emit(StateSyncEvent.StateUpdate, payload);
+                this.emit(StateSyncEvent.AttributesUpdate, payload);
+                break;
+            case IframeEvents.ReciveMagixEvent:
+                if (payload.event === StateSyncEvent.CompStateUpdate) {
+                    this.emit(StateSyncEvent.CompStateUpdate, payload.payload, payload);
+                }
                 break;
             case IframeEvents.GetAttributes:
-                this._initPage(payload);
+                this.emit(StateSyncEvent.GetAttributes, payload);
                 break;
             default:
                 break;
